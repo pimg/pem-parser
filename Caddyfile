@@ -1,0 +1,3 @@
+pem-parser.local {
+    reverse_proxy pem-parser:8080
+}
