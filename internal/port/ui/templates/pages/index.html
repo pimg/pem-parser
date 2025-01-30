@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    >
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css"
+    >
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <title>PEM Parser</title>
+
+    <style>
+        :root {
+            --pico-border-radius: 1rem;
+            --pico-font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+            --pico-typography-spacing-vertical: 0.5rem;
+        }
+
+        button {
+            --pico-font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+<main class="container">
+    <h1>PEM Parser</h1>
+    <div id="form">
+        <form
+                action="/"
+                method="post"
+                autocomplete="off"
+                hx-target="#result"
+                hx-boost="true"
+        >
+            <fieldset>
+                <textarea
+                        id="pem"
+                        name="pem"
+                        rows="8"
+                        aria-label="PEM"
+                        aria-describedby="pem-helper"
+                >
+            </textarea>
+                <small id="pem-helper">Paste a PEM file here</small>
+            </fieldset>
+            <button type="submit">
+                Parse PEM file
+            </button>
+        </form>
+    </div>
+    <div id="result">
+    </div>
+</main>
+</body>
+</html>

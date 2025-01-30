@@ -1,0 +1,23 @@
+{{ block "result-block" . }}
+    {{ if ne (len .SuccessMessage) 0 }}
+        <article class="pico-background-jade-500">
+            <hgroup>
+                <h4 class="pico-color-grey-50">Parsed PEM successfully!</h4><br>
+                <p class="pico-color-grey-50">{{ .SuccessMessage }}</p>
+            </hgroup>
+        </article>
+    {{ end }}
+
+    {{ if ne (len .ErrorMessage) 0 }}
+        <article class="pico-background-red-500">
+            <hgroup>
+                <h4 class="pico-color-grey-50">Failed to parse PEM file</h4><br>
+                <p class="pico-color-grey-50" style="white-space: pre-wrap">{{ .ErrorMessage }}</p>
+            </hgroup>
+        </article>
+    {{ end }}
+
+    {{ if gt (len .Result) 0 }}
+        <article class="pico-background-zinc-500" style="white-space: pre-wrap">{{ .Result }}</article>
+    {{ end }}
+{{ end }}
