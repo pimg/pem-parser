@@ -2,9 +2,8 @@ name: build
 
 on:
   push:
-
-permissions:
-  contents: read
+    branches-ignore:
+      - main
 
 jobs:
   build:
