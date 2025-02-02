@@ -42,5 +42,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/apily-nl/pem-parser:latest
-            ghcr.io/apily-nl/pem-parser:${{ github.sha }}
+            ghcr.io/pimg/pem-parser:latest
+            ghcr.io/pimg/pem-parser:${{ github.sha }}
