@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -13,8 +14,24 @@ import (
 	"time"
 )
 
+var debug bool
+
 func main() {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	flag.BoolVar(&debug, "debug", false, "enable debug logging")
+	flag.Parse()
+
+	logLevel := &slog.LevelVar{}
+	opts := &slog.HandlerOptions{
+		Level: logLevel,
+	}
+
+	handler := slog.NewJSONHandler(os.Stdout, opts)
+	logger := slog.New(handler)
+
+	if debug {
+		logLevel.Set(slog.LevelDebug)
+		logger.Debug("Debug logging enabled")
+	}
 
 	application := app.NewApplication(logger)
 
