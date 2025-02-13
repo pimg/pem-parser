@@ -13,6 +13,9 @@ import (
 //go:embed templates/**
 var tplFolder embed.FS
 
+//go:embed assets/**
+var assetsFolder embed.FS
+
 type Server struct {
 	logger    *slog.Logger
 	Http      *http.Server
@@ -36,6 +39,7 @@ func NewServer(logger *slog.Logger, app *app.Application) (*Server, error) {
 
 	router.HandleFunc("GET /", server.homeHandler)
 	router.HandleFunc("POST /", server.pemParserHandler)
+	router.Handle("GET /assets/{path...}", http.FileServer(http.FS(assetsFolder)))
 
 	httpServer := &http.Server{Addr: ":8080", Handler: router}
 	server.Http = httpServer
