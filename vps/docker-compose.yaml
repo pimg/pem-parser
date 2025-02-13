@@ -20,6 +20,7 @@ services:
     expose:
       - 8080
     deploy:
+      mode: replicated
       replicas: 2
     restart: unless-stopped
 volumes:
