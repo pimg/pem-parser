@@ -16,7 +16,7 @@ services:
       - caddy_data:/data
       - caddy_config:/config
   pem-parser:
-    image: pem-parser:latest
+    image: ghcr.io/pimg/pem-parser:latest
     expose:
       - 8080
     deploy:
