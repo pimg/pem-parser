@@ -1,0 +1,27 @@
+services:
+  caddy:
+    image: caddy:2.9.1
+    restart: unless-stopped
+    depends_on:
+      - pem-parser
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - $PWD/conf/Caddyfile:/etc/caddy/Caddyfile
+      - $PWD/site:/srv
+      - caddy_data:/data
+      - caddy_config:/config
+  pem-parser:
+    image: pem-parser:latest
+    expose:
+      - 8080
+    deploy:
+      replicas: 2
+    restart: unless-stopped
+volumes:
+  caddy_data:
+  caddy_config:
