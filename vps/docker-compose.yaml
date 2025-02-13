@@ -17,8 +17,6 @@ services:
       - caddy_config:/config
   pem-parser:
     image: ghcr.io/pimg/pem-parser:latest
-    expose:
-      - 8080
     deploy:
       mode: replicated
       replicas: 2
