@@ -1,4 +1,13 @@
 services:
+  watchtower:
+    image: containrrr/watchtower
+    command:
+      - "--label-enable"
+      - "--interval"
+      - "30"
+      - "--rolling-restart"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   caddy:
     image: caddy:2.9.1
     restart: unless-stopped
@@ -17,6 +26,8 @@ services:
       - caddy_config:/config
   pem-parser:
     image: ghcr.io/pimg/pem-parser:latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     deploy:
       mode: replicated
       replicas: 2
