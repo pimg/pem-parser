@@ -1,18 +1,15 @@
-
-let form = document.getElementById("form");
-let handler =()=> {
-    console.log("validation triggered");
-    event.preventDefault(); // Prevent default form submission
-
-    validateForm()
-}
-['submit', 'blur', 'focusout'].forEach(event => form.addEventListener(event, handler));
+const pem = document.getElementById("pem")
+const form = document.getElementById("form");
+['submit', 'input', 'focusout'].forEach(event => form.addEventListener(event, function (event) {
+    event.preventDefault();
+    validateForm();
+}));
 
 function validateForm() {
+    console.log("validation triggered")
     let isValid = true;
     let errorMessage = ''
 
-    const pem = document.getElementById('pem');
     if (pem.value.trim() === '') {
         isValid = false;
         errorMessage = "Must submit a PEM file"
@@ -36,4 +33,19 @@ function validateForm() {
 function isLikelyPEM(input) {
     const pemRegex = /-----BEGIN (?!PRIVATE KEY)([A-Z0-9 ]+)-----[\s\S]+?-----END \1-----/g;
     return pemRegex.test(input);
+}
+
+pem.ondrop = function (e) {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    dropfile(file);
+};
+
+function dropfile(file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        pem.value = e.target.result;
+        validateForm();
+    };
+    reader.readAsText(file, "UTF-8");
 }
