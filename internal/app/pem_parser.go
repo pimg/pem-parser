@@ -25,7 +25,11 @@ func NewPEMHandler(logger *slog.Logger) *PEMHandler {
 
 func (h *PEMHandler) Handle(pemRaw []byte) (*PEMResponse, error) {
 	block, rest := pem.Decode(pemRaw)
-	if block == nil || len(rest) > 0 {
+	if block == nil {
+		return nil, errors.New("failed to decode PEM block, the submitted data does not seem to be PEM encoded")
+	}
+
+	if len(rest) > 0 {
 		return nil, errors.New("PEM contains more than one PEM block, this is not yet supported")
 	}
 
