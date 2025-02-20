@@ -15,8 +15,14 @@ function enableCopyOnClick() {
 }
 
 function onClickHandler(event) {
-    copyTextFromElementToClipboard(event.currentTarget.dataset.copyOnClick)
-    event.preventDefault()
+    const el = event.currentTarget
+    copyTextFromElementToClipboard(el.dataset.copyOnClick);
+    event.preventDefault();
+
+    el.setAttribute("data-tooltip","Copied!");
+    setTimeout(() => {
+        el.removeAttribute("data-tooltip")
+    }, 1500);
 }
 
 function copyTextFromElementToClipboard(elementID) {
