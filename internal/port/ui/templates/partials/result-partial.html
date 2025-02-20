@@ -21,155 +21,211 @@
 
         {{ if .Result.SerialNumber }}
             <label>Certificate SerialNumber
-                <input
-                    type="text"
-                    value="{{ .Result.SerialNumber }}"
-                    aria-label="Read-only input"
-                    readonly
-                />
+                <div role="group">
+                    <input
+                        id="cert-serial"
+                        type="text"
+                        value="{{ .Result.SerialNumber }}"
+                        aria-label="Read-only input"
+                        readonly
+                    />
+                    <a href="#" role="button" class="secondary" data-copy-on-click="cert-serial"><div class="icon-copy"></div></a>
+                </div>
             </label>
         {{ end }}
 
         {{ if .Result.IssuerName }}
             <label>Issuer
-            <input
-                type="text"
-                value="{{ .Result.IssuerName }}"
-                aria-label="Read-only input"
-                readonly
-            />
+                <div role="group">
+                    <input
+                        id="issuer"
+                        type="text"
+                        value="{{ .Result.IssuerName }}"
+                        aria-label="Read-only input"
+                        readonly
+                    />
+                    <a href="#" role="button" class="secondary" data-copy-on-click="issuer"><div class="icon-copy"></div></a>
+                </div>
             </label>
         {{ end }}
         <hr/>
 
         <h4>Subject DN</h4>
             <label>CommonName
-                <input
-                    type="text"
-                    value="{{ .Result.DN.CommonName }}"
-                    aria-label="Read-only input"
-                    readonly
-                />
+                <div role="group">
+                    <input
+                        id="cn"
+                        type="text"
+                        value="{{ .Result.DN.CommonName }}"
+                        aria-label="Read-only input"
+                        readonly
+                    />
+                    <a href="#" role="button" class="secondary" data-copy-on-click="cn"><div class="icon-copy"></div></a>
+                </div>
             </label>
 
             {{ if .Result.DN.SerialNumber }}
                 <label>SerialNumber
-                    <input
-                        type="text"
-                        value="{{ .Result.DN.SerialNumber }}"
-                        aria-label="Read-only input"
-                        readonly
-                    />
+                    <div role="group">
+                        <input
+                            id="serial"
+                            type="text"
+                            value="{{ .Result.DN.SerialNumber }}"
+                            aria-label="Read-only input"
+                            readonly
+                        />
+                        <a href="#" role="button" class="secondary" data-copy-on-click="serial"><div class="icon-copy"></div></a>
+                    </div>
                 </label>
             {{ end }}
 
             {{ if .Result.DN.Country }}
                 <label>Country
-                    <input
-                        type="text"
-                        value="{{ .Result.DN.Country }}"
-                        aria-label="Read-only input"
-                        readonly
-                    />
+                    <div role="group">
+                        <input
+                            id="country"
+                            type="text"
+                            value="{{ .Result.DN.Country }}"
+                            aria-label="Read-only input"
+                            readonly
+                        />
+                        <a href="#" role="button" class="secondary" data-copy-on-click="country"><div class="icon-copy"></div></a>
+                    </div>
                 </label>
             {{ end }}
             {{ if .Result.DN.State }}
                 <label>State
-                    <input
-                        type="text"
-                        value="{{ .Result.DN.State }}"
-                        aria-label="Read-only input"
-                        readonly
-                    />
+                    <div role="group">
+                        <input
+                            id="state"
+                            type="text"
+                            value="{{ .Result.DN.State }}"
+                            aria-label="Read-only input"
+                            readonly
+                        />
+                        <a href="#" role="button" class="secondary" data-copy-on-click="state"><div class="icon-copy"></div></a>
+                    </div>
                 </label>
             {{ end }}
             {{ if .Result.DN.Locality }}
                 <label>Locality
-                    <input
-                        type="text"
-                        value="{{ .Result.DN.Locality }}"
-                        aria-label="Read-only input"
-                        readonly
-                    />
+                    <div role="group">
+                        <input
+                            id="locality"
+                            type="text"
+                            value="{{ .Result.DN.Locality }}"
+                            aria-label="Read-only input"
+                            readonly
+                        />
+                        <a href="#" role="button" class="secondary" data-copy-on-click="locality"><div class="icon-copy"></div></a>
+                    </div>
                 </label>
             {{ end }}
             {{ if .Result.DN.Organization }}
                 <label>Organization
-                    <input
-                        type="text"
-                        value="{{ .Result.DN.Organization }}"
-                        aria-label="Read-only input"
-                        readonly
-                    />
+                    <div role="group">
+                        <input
+                            id="org"
+                            type="text"
+                            value="{{ .Result.DN.Organization }}"
+                            aria-label="Read-only input"
+                            readonly
+                        />
+                        <a href="#" role="button" class="secondary" data-copy-on-click="org"><div class="icon-copy"></div></a>
+                    </div>
                 </label>
             {{ end }}
             {{ if .Result.DN.OrganizationalUnit }}
                 <label>OrganizationalUnit
-                    <input
-                        type="text"
-                        value="{{ .Result.DN.OrganizationalUnit }}"
-                        aria-label="Read-only input"
-                        readonly
-                    />
+                    <div role="group">
+                        <input
+                            id="ou"
+                            type="text"
+                            value="{{ .Result.DN.OrganizationalUnit }}"
+                            aria-label="Read-only input"
+                            readonly
+                        />
+                        <a href="#" role="button" class="secondary" data-copy-on-click="ou"><div class="icon-copy"></div></a>
+                    </div>
                 </label>
             {{ end }}
             {{ if .Result.DN.EmailAddress }}
                 <label>EmailAddress
-                    <input
-                        type="text"
-                        value="{{ .Result.DN.EmailAddress }}"
-                        aria-label="Read-only input"
-                        readonly
-                    />
+                    <div role="group">
+                        <input
+                            id="email"
+                            type="text"
+                            value="{{ .Result.DN.EmailAddress }}"
+                            aria-label="Read-only input"
+                            readonly
+                        />
+                        <a href="#" role="button" class="secondary" data-copy-on-click="email"><div class="icon-copy"></div></a>
+                    </div>
                 </label>
             {{ end }}
         <hr/>
         <h4>Validity</h4>
         {{ if .Result.NotBefore }}
             <label>Not Before
-                <input
-                    type="text"
-                    value="{{ .Result.NotBefore }}"
-                    aria-label="Read-only input"
-                    readonly
-                />
+                <div role="group">
+                    <input
+                        id="nb"
+                        type="text"
+                        value="{{ .Result.NotBefore }}"
+                        aria-label="Read-only input"
+                        readonly
+                    />
+                    <a href="#" role="button" class="secondary" data-copy-on-click="nb"><div class="icon-copy"></div></a>
+                </div>
             </label>
         {{ end }}
 
         {{ if .Result.NotAfter }}
-            <label>Not Afer
-                <input
-                    type="text"
-                    value="{{ .Result.NotAfter }}"
-                    aria-label="Read-only input"
-                    readonly
-                />
+            <label>Not After
+                <div role="group">
+                    <input
+                        id="na"
+                        type="text"
+                        value="{{ .Result.NotAfter }}"
+                        aria-label="Read-only input"
+                        readonly
+                    />
+                    <a href="#" role="button" class="secondary" data-copy-on-click="na"><div class="icon-copy"></div></a>
+                </div>
             </label>
         {{ end }}
 
         <hr/>
         {{ if gt (len .Result.SubjectAlternativeNames) 0 }}
             <h5>SAN</h5>
-            {{ range $value := .Result.SubjectAlternativeNames }}
-                <input
-                    type="text"
-                    value="{{ $value }}"
-                    aria-label="Read-only input"
-                    readonly
-                />
+            {{ range $i, $value := .Result.SubjectAlternativeNames }}
+                <div role="group">
+                    <input
+                            id="san_{{ $i }}"
+                            type="text"
+                            value="{{ $value }}"
+                            aria-label="Read-only input"
+                            readonly
+                    />
+                    <a href="#" role="button" class="secondary" data-copy-on-click="san_{{ $i }}"><div class="icon-copy"></div></a>
+                </div>
             {{ end }}
         {{ end }}
 
         <hr/>
         {{ if gt (len .Result.KeyUsages) 0 }}
             <h5>Key Usage</h5>
-            {{ range $value := .Result.KeyUsages }}
-                <input
-                    type="text"
-                    value="{{ $value }}"
-                    aria-label="Read-only input"
-                    readonly
-                />
+            {{ range $i, $value := .Result.KeyUsages }}
+                <div role="group">
+                    <input
+                        id="ku_{{ $i}}"
+                        type="text"
+                        value="{{ $value }}"
+                        aria-label="Read-only input"
+                        readonly
+                    />
+                    <a href="#" role="button" class="secondary" data-copy-on-click="ku_{{ $i }}"><div class="icon-copy"></div></a>
+                </div>
             {{ end }}
         {{ end }}
     {{ end }}
