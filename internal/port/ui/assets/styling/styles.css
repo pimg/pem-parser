@@ -1,0 +1,15 @@
+.icon-copy {
+    background: url("../../assets/icons/copy.svg") no-repeat;
+    width: 1rem;
+    height: 1rem;
+}
+
+:root {
+    --pico-border-radius: 0.5rem;
+    --pico-font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --pico-typography-spacing-vertical: 0.5rem;
+}
+
+button {
+    --pico-font-weight: 700;
+}
