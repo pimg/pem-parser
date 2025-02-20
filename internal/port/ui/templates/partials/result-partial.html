@@ -1,23 +1,183 @@
 {{ block "result-block" . }}
     {{ if ne (len .SuccessMessage) 0 }}
-        <article style="background-color: #62af9a">
+        <article style="background-color: var(--pico-ins-color)">
             <hgroup>
-                <h4 style="color: #fff">Parsed PEM successfully!</h4><br>
-                <p style="color: #fff">{{ .SuccessMessage }}</p>
+                <h4 style="color: var(--pico-primary-inverse)">Parsed PEM successfully!</h4><br>
+                <p style="color: var(--pico-primary-inverse)">{{ .SuccessMessage }}</p>
             </hgroup>
         </article>
     {{ end }}
 
     {{ if ne (len .ErrorMessage) 0 }}
-        <article style="background-color: #ce7e7b">
+        <article style="background-color: var(--pico-del-color)">
             <hgroup>
-                <h4 style="color: #fff">Failed to parse PEM file</h4><br>
-                <p style="color: #fff">{{ .ErrorMessage }}</p>
+                <h4 style="color: var(--pico-primary-inverse)">Failed to parse PEM file</h4><br>
+                <p style="color: var(--pico-primary-inverse)">{{ .ErrorMessage }}</p>
             </hgroup>
         </article>
     {{ end }}
 
-    {{ if gt (len .Result) 0 }}
-        <article class="pico-background-zinc-500" style="white-space: pre-wrap">{{ .Result }}</article>
+    {{ if .Result }}
+
+        {{ if .Result.SerialNumber }}
+            <label>Certificate SerialNumber
+                <input
+                    type="text"
+                    value="{{ .Result.SerialNumber }}"
+                    aria-label="Read-only input"
+                    readonly
+                />
+            </label>
+        {{ end }}
+
+        {{ if .Result.IssuerName }}
+            <label>Issuer
+            <input
+                type="text"
+                value="{{ .Result.IssuerName }}"
+                aria-label="Read-only input"
+                readonly
+            />
+            </label>
+        {{ end }}
+        <hr/>
+
+        <h4>Subject DN</h4>
+            <label>CommonName
+                <input
+                    type="text"
+                    value="{{ .Result.DN.CommonName }}"
+                    aria-label="Read-only input"
+                    readonly
+                />
+            </label>
+
+            {{ if .Result.DN.SerialNumber }}
+                <label>SerialNumber
+                    <input
+                        type="text"
+                        value="{{ .Result.DN.SerialNumber }}"
+                        aria-label="Read-only input"
+                        readonly
+                    />
+                </label>
+            {{ end }}
+
+            {{ if .Result.DN.Country }}
+                <label>Country
+                    <input
+                        type="text"
+                        value="{{ .Result.DN.Country }}"
+                        aria-label="Read-only input"
+                        readonly
+                    />
+                </label>
+            {{ end }}
+            {{ if .Result.DN.State }}
+                <label>State
+                    <input
+                        type="text"
+                        value="{{ .Result.DN.State }}"
+                        aria-label="Read-only input"
+                        readonly
+                    />
+                </label>
+            {{ end }}
+            {{ if .Result.DN.Locality }}
+                <label>Locality
+                    <input
+                        type="text"
+                        value="{{ .Result.DN.Locality }}"
+                        aria-label="Read-only input"
+                        readonly
+                    />
+                </label>
+            {{ end }}
+            {{ if .Result.DN.Organization }}
+                <label>Organization
+                    <input
+                        type="text"
+                        value="{{ .Result.DN.Organization }}"
+                        aria-label="Read-only input"
+                        readonly
+                    />
+                </label>
+            {{ end }}
+            {{ if .Result.DN.OrganizationalUnit }}
+                <label>OrganizationalUnit
+                    <input
+                        type="text"
+                        value="{{ .Result.DN.OrganizationalUnit }}"
+                        aria-label="Read-only input"
+                        readonly
+                    />
+                </label>
+            {{ end }}
+            {{ if .Result.DN.EmailAddress }}
+                <label>EmailAddress
+                    <input
+                        type="text"
+                        value="{{ .Result.DN.EmailAddress }}"
+                        aria-label="Read-only input"
+                        readonly
+                    />
+                </label>
+            {{ end }}
+        <hr/>
+        <h4>Validity</h4>
+        {{ if .Result.NotBefore }}
+            <label>Not Before
+                <input
+                    type="text"
+                    value="{{ .Result.NotBefore }}"
+                    aria-label="Read-only input"
+                    readonly
+                />
+            </label>
+        {{ end }}
+
+        {{ if .Result.NotAfter }}
+            <label>Not Afer
+                <input
+                    type="text"
+                    value="{{ .Result.NotAfter }}"
+                    aria-label="Read-only input"
+                    readonly
+                />
+            </label>
+        {{ end }}
+
+        <hr/>
+        {{ if gt (len .Result.SubjectAlternativeNames) 0 }}
+            <h5>SAN</h5>
+            {{ range $value := .Result.SubjectAlternativeNames }}
+                <input
+                    type="text"
+                    value="{{ $value }}"
+                    aria-label="Read-only input"
+                    readonly
+                />
+            {{ end }}
+        {{ end }}
+
+        <hr/>
+        {{ if gt (len .Result.KeyUsages) 0 }}
+            <h5>Key Usage</h5>
+            {{ range $value := .Result.KeyUsages }}
+                <input
+                    type="text"
+                    value="{{ $value }}"
+                    aria-label="Read-only input"
+                    readonly
+                />
+            {{ end }}
+        {{ end }}
+    {{ end }}
+
+    {{ if gt (len .Result.Raw) 0 }}
+        <details closed>
+            <summary role="button" class="secondary">Raw</summary>
+            <article style="white-space: pre-wrap;">{{ .Result }}</article>
+        </details>
     {{ end }}
 {{ end }}
