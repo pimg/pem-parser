@@ -2,6 +2,7 @@ package app
 
 import (
 	"crypto/x509"
+	"crypto/x509/pkix"
 	"encoding/pem"
 	"errors"
 	"log/slog"
@@ -17,7 +18,7 @@ type PEMHandler struct {
 
 type PEMResponse struct {
 	SerialNumber            string
-	DistinguishedName       DistinguishedName
+	DistinguishedName       *DistinguishedName
 	IssuerName              string
 	NotBefore               time.Time
 	NotAfter                time.Time
@@ -36,22 +37,39 @@ type DistinguishedName struct {
 	Organization       []string
 	OrganizationalUnit []string
 	EmailAddress       []string
+	Short              string
 }
 
 func NewPEMHandler(logger *slog.Logger) *PEMHandler {
 	return &PEMHandler{logger: logger}
 }
 
-func (h *PEMHandler) Handle(pemRaw []byte) (*PEMResponse, error) {
-	block, rest := pem.Decode(pemRaw)
-	if block == nil {
+func (h *PEMHandler) Handle(pemRaw []byte) ([]*PEMResponse, error) {
+	chain := make([]*PEMResponse, 0)
+	var certDERBlock *pem.Block
+	for {
+		certDERBlock, pemRaw = pem.Decode(pemRaw)
+		if certDERBlock == nil && len(pemRaw) > 0 {
+			return nil, errors.New("failed to decode PEM block, the submitted data does not seem to be PEM encoded")
+		}
+		if certDERBlock == nil {
+			break
+		}
+		pemResponse, err := h.parsePEMBlock(certDERBlock)
+		if err != nil {
+			return nil, err
+		}
+		chain = append(chain, pemResponse)
+	}
+
+	if len(chain) < 1 {
 		return nil, errors.New("failed to decode PEM block, the submitted data does not seem to be PEM encoded")
 	}
 
-	if len(rest) > 0 {
-		return nil, errors.New("PEM contains more than one PEM block, this is not yet supported")
-	}
+	return chain, nil
+}
 
+func (h *PEMHandler) parsePEMBlock(block *pem.Block) (*PEMResponse, error) {
 	pemResponse := &PEMResponse{}
 	switch block.Type {
 	case "CERTIFICATE":
@@ -70,15 +88,7 @@ func (h *PEMHandler) Handle(pemRaw []byte) (*PEMResponse, error) {
 		pemResponse.IssuerName = cert.Issuer.CommonName
 		pemResponse.NotBefore = cert.NotBefore
 		pemResponse.NotAfter = cert.NotAfter
-		pemResponse.DistinguishedName = DistinguishedName{
-			CommonName:         cert.Subject.CommonName,
-			SerialNumber:       cert.Subject.SerialNumber,
-			Country:            cert.Subject.Country,
-			State:              cert.Subject.Province,
-			Locality:           cert.Subject.Locality,
-			Organization:       cert.Subject.Organization,
-			OrganizationalUnit: cert.Subject.OrganizationalUnit,
-		}
+		pemResponse.DistinguishedName = mapSubject(cert.Subject)
 		pemResponse.SubjectAlternativeNames = cert.DNSNames
 		pemResponse.KeyUsages = parseKeyUsage(cert.KeyUsage)
 	case "CERTIFICATE REQUEST":
@@ -93,15 +103,7 @@ func (h *PEMHandler) Handle(pemRaw []byte) (*PEMResponse, error) {
 			h.logger.Error("failed to render certificate request text", "error", err)
 			return nil, err
 		}
-		pemResponse.DistinguishedName = DistinguishedName{
-			CommonName:         csr.Subject.CommonName,
-			SerialNumber:       csr.Subject.SerialNumber,
-			Country:            csr.Subject.Country,
-			State:              csr.Subject.Province,
-			Locality:           csr.Subject.Locality,
-			Organization:       csr.Subject.Organization,
-			OrganizationalUnit: csr.Subject.OrganizationalUnit,
-		}
+		pemResponse.DistinguishedName = mapSubject(csr.Subject)
 		pemResponse.SubjectAlternativeNames = csr.DNSNames
 	default:
 		h.logger.Info("unknown certificate type", "type", block.Type)
@@ -112,8 +114,20 @@ func (h *PEMHandler) Handle(pemRaw []byte) (*PEMResponse, error) {
 	}
 
 	pemResponse.Type = block.Type
-
 	return pemResponse, nil
+}
+
+func mapSubject(sub pkix.Name) *DistinguishedName {
+	return &DistinguishedName{
+		CommonName:         sub.CommonName,
+		SerialNumber:       sub.SerialNumber,
+		Country:            sub.Country,
+		State:              sub.Province,
+		Locality:           sub.Locality,
+		Organization:       sub.Organization,
+		OrganizationalUnit: sub.OrganizationalUnit,
+		Short:              sub.String(),
+	}
 }
 
 func parseKeyUsage(usage x509.KeyUsage) []string {

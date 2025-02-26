@@ -11,7 +11,12 @@ import (
 type PEMParserPage struct {
 	SuccessMessage string
 	ErrorMessage   string
-	Result         *PEMResponse
+	Result         *Result
+}
+
+type Result struct {
+	Leaf  *PEMResponse
+	Chain []*PEMResponse // TODO reverse this slice
 }
 
 type PEMResponse struct {
@@ -35,6 +40,7 @@ type DistinguishedName struct {
 	Organization       string
 	OrganizationalUnit string
 	EmailAddress       string
+	Short              string
 }
 
 func (s *Server) pemParserHandler(w http.ResponseWriter, r *http.Request) {
@@ -52,9 +58,13 @@ func (s *Server) pemParserHandler(w http.ResponseWriter, r *http.Request) {
 		page.ErrorMessage = err.Error()
 	}
 
-	if out != nil {
-		page.SuccessMessage = fmt.Sprintf("Successfully parsed PEM %s file", out.Type)
-		page.Result = mapPEMResponse(out)
+	if len(out) > 0 {
+		page.SuccessMessage = fmt.Sprintf("Successfully parsed PEM %s file", out[0].Type) // TODO consider changing this
+		chain := mapResponse(out)
+		page.Result = &Result{
+			Leaf:  chain[len(chain)-1],
+			Chain: chain,
+		}
 	}
 
 	err = s.Templates.ExecuteTemplate(w, "result-block", page)
@@ -73,6 +83,14 @@ func parseForm(r *http.Request) ([]byte, error) {
 	return []byte(strings.TrimSpace(r.PostFormValue("pem"))), nil
 }
 
+func mapResponse(handlerOut []*app.PEMResponse) []*PEMResponse {
+	response := make([]*PEMResponse, len(handlerOut))
+	for i, block := range handlerOut {
+		response[len(handlerOut)-i-1] = mapPEMResponse(block)
+	}
+	return response
+}
+
 func mapPEMResponse(response *app.PEMResponse) *PEMResponse {
 	return &PEMResponse{
 		SerialNumber: response.SerialNumber,
@@ -85,6 +103,7 @@ func mapPEMResponse(response *app.PEMResponse) *PEMResponse {
 			Organization:       strings.Join(response.DistinguishedName.Organization, ","),
 			OrganizationalUnit: strings.Join(response.DistinguishedName.OrganizationalUnit, ","),
 			EmailAddress:       strings.Join(response.DistinguishedName.EmailAddress, ","),
+			Short:              response.DistinguishedName.Short,
 		},
 		IssuerName:              response.IssuerName,
 		NotBefore:               response.NotBefore,

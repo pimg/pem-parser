@@ -1,0 +1,19 @@
+{{ define "status" }}
+{{ if ne (len .SuccessMessage) 0 }}
+<article style="background-color: var(--pico-ins-color)">
+    <hgroup>
+        <h4 style="color: var(--pico-primary-inverse)">Parsed PEM successfully!</h4><br>
+        <p style="color: var(--pico-primary-inverse)">{{ .SuccessMessage }}</p>
+    </hgroup>
+</article>
+{{ end }}
+
+{{ if ne (len .ErrorMessage) 0 }}
+<article style="background-color: var(--pico-del-color)">
+    <hgroup>
+        <h4 style="color: var(--pico-primary-inverse)">Failed to parse PEM file</h4><br>
+        <p style="color: var(--pico-primary-inverse)">{{ .ErrorMessage }}</p>
+    </hgroup>
+</article>
+{{ end }}
+{{ end }}

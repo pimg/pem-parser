@@ -1,239 +1,29 @@
 {{ block "result-block" . }}
-    {{ if ne (len .SuccessMessage) 0 }}
-        <article style="background-color: var(--pico-ins-color)">
-            <hgroup>
-                <h4 style="color: var(--pico-primary-inverse)">Parsed PEM successfully!</h4><br>
-                <p style="color: var(--pico-primary-inverse)">{{ .SuccessMessage }}</p>
-            </hgroup>
-        </article>
-    {{ end }}
 
-    {{ if ne (len .ErrorMessage) 0 }}
-        <article style="background-color: var(--pico-del-color)">
-            <hgroup>
-                <h4 style="color: var(--pico-primary-inverse)">Failed to parse PEM file</h4><br>
-                <p style="color: var(--pico-primary-inverse)">{{ .ErrorMessage }}</p>
-            </hgroup>
-        </article>
-    {{ end }}
+{{ block "status" . }}{{ end }}
 
-    {{ if .Result }}
 
-        {{ if .Result.SerialNumber }}
-            <label>Certificate SerialNumber
-                <div role="group">
-                    <input
-                        id="cert-serial"
-                        type="text"
-                        value="{{ .Result.SerialNumber }}"
-                        aria-label="Read-only input"
-                        readonly
-                    />
-                    <a href="#" role="button" class="secondary" data-copy-on-click="cert-serial"><div class="icon-copy"></div></a>
-                </div>
-            </label>
-        {{ end }}
+{{ if .Result }}
+<nav role="tab-control">
+    <ul>
+        <li><a href="#"><label for="leaf">Leaf</label></a></li>
+        <li><a href="#"><label for="chain">Chain</label></a></li>
+    </ul>
+</nav>
+<div role="tabs">
+    <section>
+        <input hidden="hidden" type="radio" name="tabs" id="leaf" checked="checked" />
+        <figure>
+                {{ block "leaf" .Result }}{{ end }}
+        </figure>
 
-        {{ if .Result.IssuerName }}
-            <label>Issuer
-                <div role="group">
-                    <input
-                        id="issuer"
-                        type="text"
-                        value="{{ .Result.IssuerName }}"
-                        aria-label="Read-only input"
-                        readonly
-                    />
-                    <a href="#" role="button" class="secondary" data-copy-on-click="issuer"><div class="icon-copy"></div></a>
-                </div>
-            </label>
-        {{ end }}
-        <hr/>
+        <input hidden="hidden" type="radio" name="tabs" id="chain" />
 
-        <h4>Subject DN</h4>
-            <label>CommonName
-                <div role="group">
-                    <input
-                        id="cn"
-                        type="text"
-                        value="{{ .Result.DN.CommonName }}"
-                        aria-label="Read-only input"
-                        readonly
-                    />
-                    <a href="#" role="button" class="secondary" data-copy-on-click="cn"><div class="icon-copy"></div></a>
-                </div>
-            </label>
+        <figure>
+                {{ block "chain" .Result.Chain }}{{ end }}
+        </figure>
+    </section>
+</div>
+{{ end }}
 
-            {{ if .Result.DN.SerialNumber }}
-                <label>SerialNumber
-                    <div role="group">
-                        <input
-                            id="serial"
-                            type="text"
-                            value="{{ .Result.DN.SerialNumber }}"
-                            aria-label="Read-only input"
-                            readonly
-                        />
-                        <a href="#" role="button" class="secondary" data-copy-on-click="serial"><div class="icon-copy"></div></a>
-                    </div>
-                </label>
-            {{ end }}
-
-            {{ if .Result.DN.Country }}
-                <label>Country
-                    <div role="group">
-                        <input
-                            id="country"
-                            type="text"
-                            value="{{ .Result.DN.Country }}"
-                            aria-label="Read-only input"
-                            readonly
-                        />
-                        <a href="#" role="button" class="secondary" data-copy-on-click="country"><div class="icon-copy"></div></a>
-                    </div>
-                </label>
-            {{ end }}
-            {{ if .Result.DN.State }}
-                <label>State
-                    <div role="group">
-                        <input
-                            id="state"
-                            type="text"
-                            value="{{ .Result.DN.State }}"
-                            aria-label="Read-only input"
-                            readonly
-                        />
-                        <a href="#" role="button" class="secondary" data-copy-on-click="state"><div class="icon-copy"></div></a>
-                    </div>
-                </label>
-            {{ end }}
-            {{ if .Result.DN.Locality }}
-                <label>Locality
-                    <div role="group">
-                        <input
-                            id="locality"
-                            type="text"
-                            value="{{ .Result.DN.Locality }}"
-                            aria-label="Read-only input"
-                            readonly
-                        />
-                        <a href="#" role="button" class="secondary" data-copy-on-click="locality"><div class="icon-copy"></div></a>
-                    </div>
-                </label>
-            {{ end }}
-            {{ if .Result.DN.Organization }}
-                <label>Organization
-                    <div role="group">
-                        <input
-                            id="org"
-                            type="text"
-                            value="{{ .Result.DN.Organization }}"
-                            aria-label="Read-only input"
-                            readonly
-                        />
-                        <a href="#" role="button" class="secondary" data-copy-on-click="org"><div class="icon-copy"></div></a>
-                    </div>
-                </label>
-            {{ end }}
-            {{ if .Result.DN.OrganizationalUnit }}
-                <label>OrganizationalUnit
-                    <div role="group">
-                        <input
-                            id="ou"
-                            type="text"
-                            value="{{ .Result.DN.OrganizationalUnit }}"
-                            aria-label="Read-only input"
-                            readonly
-                        />
-                        <a href="#" role="button" class="secondary" data-copy-on-click="ou"><div class="icon-copy"></div></a>
-                    </div>
-                </label>
-            {{ end }}
-            {{ if .Result.DN.EmailAddress }}
-                <label>EmailAddress
-                    <div role="group">
-                        <input
-                            id="email"
-                            type="text"
-                            value="{{ .Result.DN.EmailAddress }}"
-                            aria-label="Read-only input"
-                            readonly
-                        />
-                        <a href="#" role="button" class="secondary" data-copy-on-click="email"><div class="icon-copy"></div></a>
-                    </div>
-                </label>
-            {{ end }}
-        <hr/>
-        <h4>Validity</h4>
-        {{ if .Result.NotBefore }}
-            <label>Not Before
-                <div role="group">
-                    <input
-                        id="nb"
-                        type="text"
-                        value="{{ .Result.NotBefore }}"
-                        aria-label="Read-only input"
-                        readonly
-                    />
-                    <a href="#" role="button" class="secondary" data-copy-on-click="nb"><div class="icon-copy"></div></a>
-                </div>
-            </label>
-        {{ end }}
-
-        {{ if .Result.NotAfter }}
-            <label>Not After
-                <div role="group">
-                    <input
-                        id="na"
-                        type="text"
-                        value="{{ .Result.NotAfter }}"
-                        aria-label="Read-only input"
-                        readonly
-                    />
-                    <a href="#" role="button" class="secondary" data-copy-on-click="na"><div class="icon-copy"></div></a>
-                </div>
-            </label>
-        {{ end }}
-
-        <hr/>
-        {{ if gt (len .Result.SubjectAlternativeNames) 0 }}
-            <h5>SAN</h5>
-            {{ range $i, $value := .Result.SubjectAlternativeNames }}
-                <div role="group">
-                    <input
-                            id="san_{{ $i }}"
-                            type="text"
-                            value="{{ $value }}"
-                            aria-label="Read-only input"
-                            readonly
-                    />
-                    <a href="#" role="button" class="secondary" data-copy-on-click="san_{{ $i }}"><div class="icon-copy"></div></a>
-                </div>
-            {{ end }}
-        {{ end }}
-
-        <hr/>
-        {{ if gt (len .Result.KeyUsages) 0 }}
-            <h5>Key Usage</h5>
-            {{ range $i, $value := .Result.KeyUsages }}
-                <div role="group">
-                    <input
-                        id="ku_{{ $i}}"
-                        type="text"
-                        value="{{ $value }}"
-                        aria-label="Read-only input"
-                        readonly
-                    />
-                    <a href="#" role="button" class="secondary" data-copy-on-click="ku_{{ $i }}"><div class="icon-copy"></div></a>
-                </div>
-            {{ end }}
-        {{ end }}
-    {{ end }}
-
-    {{ if gt (len .Result.Raw) 0 }}
-        <details closed>
-            <summary role="button" class="secondary">Raw</summary>
-            <article style="white-space: pre-wrap;">{{ .Result }}</article>
-        </details>
-    {{ end }}
 {{ end }}
