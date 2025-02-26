@@ -1,0 +1,58 @@
+{{ define "chain" }}
+
+<ul class="tree">
+    <li>
+    <details open><summary>{{ (index . 0).DN.CommonName }}</summary>
+        <ul>
+            <li>
+                SerialNumber: {{ (index . 0).SerialNumber }}
+            </li>
+            <li>
+                Distinguished Name: {{ (index . 0).DN.Short }}
+            </li>
+            <li>
+                Issuer: {{ (index . 0).IssuerName }}
+            </li>
+            <li>
+                Not Before: {{ (index . 0).NotBefore }}
+            </li>
+            <li>
+                Not After: {{ (index . 0).NotAfter }}
+            </li>
+        </ul>
+        {{ template "tree" (slice . 1) }}
+    </details>
+    </li>
+</ul>
+
+{{ end }}
+
+{{ define "tree" }}
+{{ if . }}
+<ul>
+    <li>
+        <details open>
+            <summary>{{ (index . 0 ).DN.CommonName }}</summary>
+        <ul>
+            <li>
+                SerialNumber: {{ (index . 0).SerialNumber }}
+            </li>
+            <li>
+                Distinguished Name: {{ (index . 0).DN.Short }}
+            </li>
+            <li>
+                Issuer: {{ (index . 0).IssuerName }}
+            </li>
+            <li>
+                Not Before: {{ (index . 0).NotBefore }}
+            </li>
+            <li>
+                Not After: {{ (index . 0).NotAfter }}
+            </li>
+        </ul>
+        {{ template "tree" (slice . 1) }}
+        </details>
+    </li>
+</ul>
+{{ end }}
+{{ end }}
