@@ -1,8 +1,10 @@
 package app
 
 import (
+	"crypto/sha256"
 	"crypto/x509"
 	"crypto/x509/pkix"
+	"encoding/hex"
 	"encoding/pem"
 	"errors"
 	"log/slog"
@@ -26,6 +28,8 @@ type PEMResponse struct {
 	KeyUsages               []string
 	Raw                     string
 	Type                    string
+	Fingerprint             string
+	PublicKey               *PublicKey
 }
 
 type DistinguishedName struct {
@@ -38,6 +42,11 @@ type DistinguishedName struct {
 	OrganizationalUnit []string
 	EmailAddress       []string
 	Short              string
+}
+
+type PublicKey struct {
+	Fingerprint string
+	Type        string
 }
 
 func NewPEMHandler(logger *slog.Logger) *PEMHandler {
@@ -91,6 +100,11 @@ func (h *PEMHandler) parsePEMBlock(block *pem.Block) (*PEMResponse, error) {
 		pemResponse.DistinguishedName = mapSubject(cert.Subject)
 		pemResponse.SubjectAlternativeNames = cert.DNSNames
 		pemResponse.KeyUsages = parseKeyUsage(cert.KeyUsage)
+		pemResponse.Fingerprint = fingerprint(cert.Raw)
+		pemResponse.PublicKey = &PublicKey{
+			Fingerprint: fingerprint(cert.RawSubjectPublicKeyInfo),
+			Type:        cert.PublicKeyAlgorithm.String(),
+		}
 	case "CERTIFICATE REQUEST":
 		csr, err := x509.ParseCertificateRequest(block.Bytes)
 		if err != nil {
@@ -103,8 +117,14 @@ func (h *PEMHandler) parsePEMBlock(block *pem.Block) (*PEMResponse, error) {
 			h.logger.Error("failed to render certificate request text", "error", err)
 			return nil, err
 		}
+
 		pemResponse.DistinguishedName = mapSubject(csr.Subject)
 		pemResponse.SubjectAlternativeNames = csr.DNSNames
+		pemResponse.Fingerprint = fingerprint(csr.RawTBSCertificateRequest)
+		pemResponse.PublicKey = &PublicKey{
+			Fingerprint: fingerprint(csr.RawSubjectPublicKeyInfo),
+			Type:        csr.PublicKeyAlgorithm.String(),
+		}
 	default:
 		h.logger.Info("unknown certificate type", "type", block.Type)
 		if strings.Contains(block.Type, "PRIVATE") {
@@ -160,4 +180,9 @@ func parseKeyUsage(usage x509.KeyUsage) []string {
 		keyUsages = append(keyUsages, "DecipherOnly")
 	}
 	return keyUsages
+}
+
+func fingerprint(raw []byte) string {
+	cs := sha256.Sum256(raw)
+	return hex.EncodeToString(cs[:])
 }

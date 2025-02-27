@@ -16,7 +16,7 @@ type PEMParserPage struct {
 
 type Result struct {
 	Leaf  *PEMResponse
-	Chain []*PEMResponse // TODO reverse this slice
+	Chain []*PEMResponse
 }
 
 type PEMResponse struct {
@@ -29,6 +29,8 @@ type PEMResponse struct {
 	KeyUsages               []string
 	Raw                     string
 	Type                    string
+	Fingerprint             string
+	PublicKey               *PublicKey
 }
 
 type DistinguishedName struct {
@@ -41,6 +43,11 @@ type DistinguishedName struct {
 	OrganizationalUnit string
 	EmailAddress       string
 	Short              string
+}
+
+type PublicKey struct {
+	Fingerprint string
+	Type        string
 }
 
 func (s *Server) pemParserHandler(w http.ResponseWriter, r *http.Request) {
@@ -111,5 +118,10 @@ func mapPEMResponse(response *app.PEMResponse) *PEMResponse {
 		SubjectAlternativeNames: response.SubjectAlternativeNames,
 		KeyUsages:               response.KeyUsages,
 		Raw:                     response.Raw,
+		Fingerprint:             response.Fingerprint,
+		PublicKey: &PublicKey{
+			Fingerprint: response.PublicKey.Fingerprint,
+			Type:        response.PublicKey.Type,
+		},
 	}
 }

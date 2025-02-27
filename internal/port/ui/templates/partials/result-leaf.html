@@ -15,6 +15,18 @@
 </label>
 {{ end }}
 
+<label>Fingerprint</label>
+    <div role="group">
+        <input
+            id="cert-fingerprint"
+            type="text"
+            value="{{ .Leaf.Fingerprint }}"
+            aria-label="Read-only input"
+            readonly
+        >
+        <a href="#" role="button" class="secondary" data-copy-on-click="cert-fingerprint"><div class="icon-copy"></div></a>
+    </div>
+
 {{ if .Leaf.IssuerName }}
 <label>Issuer
     <div role="group">
@@ -194,6 +206,7 @@
 {{ end }}
 
 <hr/>
+<h4>Public Key</h4>
 {{ if gt (len .Leaf.KeyUsages) 0 }}
 <h5>Key Usage</h5>
 {{ range $i, $value := .Leaf.KeyUsages }}
@@ -209,6 +222,30 @@
 </div>
 {{ end }}
 {{ end }}
+
+<label>Fingerprint</label>
+<div role="group">
+    <input
+        id="key-fingerprint"
+        type="text"
+        value="{{ .Leaf.PublicKey.Fingerprint }}"
+        aria-label="Read-only input"
+        readonly
+    />
+    <a href="#" role="button" class="secondary" data-copy-on-click="key-fingerprint"><div class="icon-copy"></div></a>
+</div>
+
+<label>Type</label>
+<div role="group">
+    <input
+        id="key-type"
+        type="text"
+        value="{{ .Leaf.PublicKey.Type }}"
+        aria-label="Read-only input"
+        readonly
+    />
+    <a href="#" role="button" class="secondary" data-copy-on-click="key-type"><div class="icon-copy"></div></a>
+</div>
 
 {{ if gt (len .Leaf.Raw) 0 }}
 <details closed>
