@@ -1,6 +1,8 @@
 name: golang-linter
 on:
   push:
+  pull_request:
+    types: [opened, reopened]
 
 permissions:
   contents: read
