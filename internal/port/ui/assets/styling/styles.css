@@ -115,3 +115,7 @@ nav[role="tab-control"] label.active {
 .tree details[open] > summary::before {
     background-position: calc(-2 * var(--radius)) 0;
 }
+
+textarea.drop-indicator {
+    border: 2px dashed var(--pico-primary-hover);
+}

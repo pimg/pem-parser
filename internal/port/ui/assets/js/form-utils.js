@@ -36,8 +36,20 @@ function isLikelyPEM(input) {
 }
 
 // required to make drop work on Firefox
-pem.ondragover = function(e){
+pem.ondragover = function(e) {
     e.preventDefault();
+
+    if (!e.target.classList.contains('drop-indicator')) {
+        e.target.classList.add('drop-indicator')
+    }
+}
+
+pem.ondragend = function (e) {
+    e.target.classList.remove('drop-indicator')
+}
+
+pem.ondragleave = function (e) {
+    e.target.classList.remove('drop-indicator')
 }
 
 pem.ondrop = function (e) {
