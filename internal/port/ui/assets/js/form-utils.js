@@ -35,6 +35,11 @@ function isLikelyPEM(input) {
     return pemRegex.test(input);
 }
 
+// required to make drop work on Firefox
+pem.ondragover = function(e){
+    e.preventDefault();
+}
+
 pem.ondrop = function (e) {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
