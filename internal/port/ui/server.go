@@ -23,6 +23,8 @@ type Server struct {
 	App       *app.Application
 }
 
+const maxRequestBytes = 2 * 1000 * 1000 // 2MB seems large enough for PEM files
+
 func NewServer(logger *slog.Logger, app *app.Application) (*Server, error) {
 	tmpl, err := template.New("").ParseFS(tplFolder, "templates/pages/**", "templates/partials/**")
 	if err != nil {
@@ -38,7 +40,7 @@ func NewServer(logger *slog.Logger, app *app.Application) (*Server, error) {
 	router := http.NewServeMux()
 
 	router.HandleFunc("GET /", server.homeHandler)
-	router.HandleFunc("POST /", server.pemParserHandler)
+	router.Handle("POST /", http.MaxBytesHandler(http.HandlerFunc(server.pemParserHandler), maxRequestBytes))
 	router.Handle("GET /assets/{path...}", http.FileServer(http.FS(assetsFolder)))
 
 	httpServer := &http.Server{Addr: ":8080", Handler: router}

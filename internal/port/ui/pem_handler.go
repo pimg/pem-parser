@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"pem-parser/internal/app"
@@ -56,13 +57,24 @@ func (s *Server) pemParserHandler(w http.ResponseWriter, r *http.Request) {
 	page := &PEMParserPage{}
 
 	pem, err := parseForm(r)
+	var maxErr *http.MaxBytesError
+	if errors.As(err, &maxErr) {
+		page.ErrorMessage = fmt.Sprintf("request is too large, max supported limit is %d MB", maxErr.Limit/(1000*1000))
+		s.RenderResultPage(w, page)
+		return
+	}
+
 	if err != nil {
 		page.ErrorMessage = "failed to parse PEM"
+		s.RenderResultPage(w, page)
+		return
 	}
 
 	out, err := s.App.PEMHandler.Handle(pem)
 	if err != nil {
 		page.ErrorMessage = err.Error()
+		s.RenderResultPage(w, page)
+		return
 	}
 
 	if len(out) > 0 {
@@ -74,7 +86,11 @@ func (s *Server) pemParserHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err = s.Templates.ExecuteTemplate(w, "result-block", page)
+	s.RenderResultPage(w, page)
+}
+
+func (s *Server) RenderResultPage(w http.ResponseWriter, page *PEMParserPage) {
+	err := s.Templates.ExecuteTemplate(w, "result-block", page)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
