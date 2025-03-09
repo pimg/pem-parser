@@ -23,7 +23,7 @@ type Server struct {
 	App       *app.Application
 }
 
-const maxRequestBytes = 2 * 1000 * 1000 // 2MB seems large enough for PEM files
+const maxRequestBytes = 1 * 1000 * 1000 // 1MB seems large enough for PEM files
 
 func NewServer(logger *slog.Logger, app *app.Application) (*Server, error) {
 	tmpl, err := template.New("").ParseFS(tplFolder, "templates/pages/**", "templates/partials/**")

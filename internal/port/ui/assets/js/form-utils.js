@@ -15,6 +15,11 @@ function validateForm() {
         errorMessage = "Must submit a PEM file"
     }
 
+    if (pem.value.length > pem.maxLength) {
+        isValid = false;
+        errorMessage = "Too large, max supported length is 2MB"
+    }
+
     if (pem.value.includes("PRIVATE")) {
         isValid = false;
         errorMessage = "It seems a private key is entered, do not submit a private key! Even though we do not store anything you should never submit a private key!!"
