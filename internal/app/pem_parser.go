@@ -14,9 +14,7 @@ import (
 	"github.com/smallstep/certinfo"
 )
 
-type PEMHandler struct {
-	logger *slog.Logger
-}
+type PEMHandler struct{}
 
 type PEMResponse struct {
 	SerialNumber            string
@@ -49,8 +47,8 @@ type PublicKey struct {
 	Type        string
 }
 
-func NewPEMHandler(logger *slog.Logger) *PEMHandler {
-	return &PEMHandler{logger: logger}
+func NewPEMHandler() *PEMHandler {
+	return &PEMHandler{}
 }
 
 func (h *PEMHandler) Handle(pemRaw []byte) ([]*PEMResponse, error) {
@@ -84,12 +82,12 @@ func (h *PEMHandler) parsePEMBlock(block *pem.Block) (*PEMResponse, error) {
 	case "CERTIFICATE":
 		cert, err := x509.ParseCertificate(block.Bytes)
 		if err != nil {
-			h.logger.Error("failed to parse certificate", "error", err)
+			slog.Error("failed to parse certificate", "error", err)
 			return nil, err
 		}
 		pemResponse.Raw, err = certinfo.CertificateText(cert)
 		if err != nil {
-			h.logger.Error("failed to render certificate text", "error", err)
+			slog.Error("failed to render certificate text", "error", err)
 			return nil, err
 		}
 
@@ -108,13 +106,13 @@ func (h *PEMHandler) parsePEMBlock(block *pem.Block) (*PEMResponse, error) {
 	case "CERTIFICATE REQUEST":
 		csr, err := x509.ParseCertificateRequest(block.Bytes)
 		if err != nil {
-			h.logger.Error("failed to parse certificate request", "error", err)
+			slog.Error("failed to parse certificate request", "error", err)
 			return nil, err
 		}
 
 		pemResponse.Raw, err = certinfo.CertificateRequestText(csr)
 		if err != nil {
-			h.logger.Error("failed to render certificate request text", "error", err)
+			slog.Error("failed to render certificate request text", "error", err)
 			return nil, err
 		}
 
@@ -126,7 +124,7 @@ func (h *PEMHandler) parsePEMBlock(block *pem.Block) (*PEMResponse, error) {
 			Type:        csr.PublicKeyAlgorithm.String(),
 		}
 	default:
-		h.logger.Info("unknown certificate type", "type", block.Type)
+		slog.Info("unknown certificate type", "type", block.Type)
 		if strings.Contains(block.Type, "PRIVATE") {
 			return nil, errors.New("You have submitted a private key! \nEven though we do not store any PEM files, you should consider this private key compromised.")
 		}

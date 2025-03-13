@@ -33,7 +33,9 @@ func main() {
 		logger.Debug("Debug logging enabled")
 	}
 
-	application := app.NewApplication(logger)
+	slog.SetDefault(logger)
+
+	application := app.NewApplication()
 
 	server, err := ui.NewServer(logger, application)
 	if err != nil {

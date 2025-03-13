@@ -1,13 +1,11 @@
 package app
 
-import "log/slog"
-
 type Application struct {
 	PEMHandler *PEMHandler
 }
 
-func NewApplication(logger *slog.Logger) *Application {
+func NewApplication() *Application {
 	return &Application{
-		PEMHandler: NewPEMHandler(logger),
+		PEMHandler: NewPEMHandler(),
 	}
 }
