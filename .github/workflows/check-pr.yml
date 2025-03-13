@@ -1,0 +1,38 @@
+name: check-pr
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+  commitlint:
+    name: commit-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: wagoid/commitlint-github-action@v6
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        name: commit linter
+  build:
+    runs-on: ubuntu-latest
+    needs:
+      - golangci
+      - commitlint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: build
+        run: |
+          make build
