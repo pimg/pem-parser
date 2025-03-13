@@ -3,6 +3,7 @@ package ui
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"pem-parser/internal/app"
 	"strings"
@@ -52,7 +53,7 @@ type PublicKey struct {
 }
 
 func (s *Server) pemParserHandler(w http.ResponseWriter, r *http.Request) {
-	s.logger.Debug("received pem parser request")
+	slog.Debug("received pem parser request")
 
 	page := &PEMParserPage{}
 

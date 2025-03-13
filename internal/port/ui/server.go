@@ -17,7 +17,6 @@ var tplFolder embed.FS
 var assetsFolder embed.FS
 
 type Server struct {
-	logger    *slog.Logger
 	Http      *http.Server
 	Templates *template.Template
 	App       *app.Application
@@ -32,7 +31,6 @@ func NewServer(logger *slog.Logger, app *app.Application) (*Server, error) {
 	}
 
 	server := &Server{
-		logger:    logger,
 		Templates: tmpl,
 		App:       app,
 	}
