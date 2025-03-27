@@ -126,7 +126,7 @@ func (h *PEMHandler) parsePEMBlock(block *pem.Block) (*PEMResponse, error) {
 	default:
 		slog.Info("unknown certificate type", "type", block.Type)
 		if strings.Contains(block.Type, "PRIVATE") {
-			return nil, errors.New("You have submitted a private key! \nEven though we do not store any PEM files, you should consider this private key compromised.")
+			return nil, errors.New("you have submitted a private key! \neven though we do not store any PEM files, you should consider this private key compromised")
 		}
 		return nil, errors.New("unsupported PEM type")
 	}
