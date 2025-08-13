@@ -15,7 +15,7 @@ jobs:
     name: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
         with:
           go-version: stable
@@ -24,7 +24,7 @@ jobs:
   build-main:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
         with:
           go-version: stable
@@ -38,7 +38,7 @@ jobs:
       - golangci
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
